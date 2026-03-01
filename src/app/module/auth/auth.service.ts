@@ -1,5 +1,6 @@
 import { UserStatus } from "../../../generated/prisma/enums";
 import { auth } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
 
 interface IRegisterPatient {
     name: string;
@@ -21,7 +22,32 @@ const registerPatient = async (payload: IRegisterPatient) => {
     if(!data.user){
         throw new Error("Failed to register patient");
     }
-    return data;
+
+    // if user successfully registered, we can create a patient record in our database and link it to the user
+    try{
+        const patient = await prisma.$transaction(async (tx) => {
+             const createPatient = await tx.patient.create({
+                data: {
+                    name: payload.name,
+                    email: payload.email,
+                    userId: data.user.id
+                }
+             })
+             return createPatient;
+        })
+
+        return {
+            ...data,
+            patient
+        }
+    }catch(error){
+        // If there is an error while creating the patient record, we should delete the user that was just created to avoid having orphaned user records without corresponding patient records.
+        console.error("Transaction error:", error);
+        await prisma.user.delete({
+            where: { id: data.user.id }
+        })
+        throw new Error("Failed to create patient record, registration rolled back");
+    }
 }
 
 interface IloginUser  {
