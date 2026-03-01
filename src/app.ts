@@ -1,6 +1,7 @@
 import express,{ Application, Request, Response } from "express";
 import { prisma } from "./app/lib/prisma";
 import { indexRoutes } from "./routes";
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 
 const app:Application = express()
 // Enable URL-encoded form data parsing
@@ -15,5 +16,8 @@ app.use("/api/v1", indexRoutes);
 app.get('/', async (req: Request, res: Response) => {
    res.send("wlcome to ph-healthcare backend");
 });
+
+// Global error handler
+app.use(globalErrorHandler);
 
 export default app;
