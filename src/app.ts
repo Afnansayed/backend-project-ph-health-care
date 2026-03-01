@@ -13,14 +13,7 @@ app.use("/api/v1", indexRoutes);
 
 // Basic route
 app.get('/', async (req: Request, res: Response) => {
-   const specilty = await prisma.specialty.create({
-    data: {
-      title: "Cardiology",
-      description: "Specializes in heart and cardiovascular diseases",
-      icon: "heart"
-    }
-  });
-  res.status(200).json({ message: "Welcome to the Healthcare API!", specialty: specilty });
+   res.send("wlcome to ph-healthcare backend");
 });
 
 export default app;
