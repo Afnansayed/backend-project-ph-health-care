@@ -2,6 +2,7 @@ import express,{ Application, Request, Response } from "express";
 import { prisma } from "./app/lib/prisma";
 import { indexRoutes } from "./routes";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
+import { notFoundHandler } from "./app/middleware/notFound";
 
 const app:Application = express()
 // Enable URL-encoded form data parsing
@@ -19,5 +20,7 @@ app.get('/', async (req: Request, res: Response) => {
 
 // Global error handler
 app.use(globalErrorHandler);
+// Not found handler
+app.use(notFoundHandler);
 
 export default app;
