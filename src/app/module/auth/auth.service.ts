@@ -1,4 +1,6 @@
+import status from "http-status";
 import { UserStatus } from "../../../generated/prisma/enums";
+import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 
@@ -20,7 +22,7 @@ const registerPatient = async (payload: IRegisterPatient) => {
         }
     })
     if(!data.user){
-        throw new Error("Failed to register patient");
+        throw new AppError(status.INTERNAL_SERVER_ERROR, "Failed to register patient");
     }
 
     // if user successfully registered, we can create a patient record in our database and link it to the user
@@ -46,7 +48,7 @@ const registerPatient = async (payload: IRegisterPatient) => {
         await prisma.user.delete({
             where: { id: data.user.id }
         })
-        throw new Error("Failed to create patient record, registration rolled back");
+        throw new AppError(status.INTERNAL_SERVER_ERROR, "Failed to create patient record, registration rolled back");
     }
 }
 
@@ -66,10 +68,10 @@ const loginUser = async (payload: IloginUser) => {
     })
 
     if(data.user.isDeleted || data.user.status === UserStatus.DELETED){
-        throw new Error("User is deleted and cannot login");
+        throw new AppError(status.BAD_REQUEST, "User is deleted and cannot login");
     }
     if(data.user.status === UserStatus.BLOCKED){
-        throw new Error("User is blocked and cannot login");
+        throw new AppError(status.BAD_REQUEST, "User is blocked and cannot login");
     }
 
     return data;

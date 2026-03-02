@@ -1,4 +1,6 @@
+import status from "http-status";
 import { Role, Specialty } from "../../../generated/prisma/client";
+import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { ICreateDoctorPayload } from "./user.interface";
@@ -11,7 +13,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
             where: { id: speacialtyId }
         })
         if(!specialty){
-            throw new Error(`Specialty with ID ${speacialtyId} not found`);
+            throw new AppError(status.NOT_FOUND, `Specialty with ID ${speacialtyId} not found`);
         }
         sepecialties.push(specialty);
      }
@@ -20,7 +22,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
         where: { email: payload.doctor.email }
      })
      if(existUser){
-        throw new Error(`User with email ${payload.doctor.email} already exists`);
+        throw new AppError(status.BAD_REQUEST, `User with email ${payload.doctor.email} already exists`);
      }
 
      const userData = await auth.api.signUpEmail({
@@ -34,7 +36,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
      })
 
      if(!userData.user){
-        throw new Error("Failed to create user for doctor");
+        throw new AppError(status.INTERNAL_SERVER_ERROR, "Failed to create user for doctor");
      }
 
      try{
@@ -106,7 +108,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
         await prisma.user.delete({
             where: { id: userData.user.id }
         })
-        throw new Error("Failed to create doctor record, registration rolled back");
+        throw new AppError(status.INTERNAL_SERVER_ERROR, "Failed to create doctor record, registration rolled back");
      }
 }
 
