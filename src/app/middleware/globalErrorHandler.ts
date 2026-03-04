@@ -1,4 +1,6 @@
-import e, { NextFunction, Request, Response } from "express";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import  { NextFunction, Request, Response } from "express";
 import { envVars } from "../config/env";
 import status from "http-status";
 import { TErrorResponse, TErrorSources } from "../interfaces/error.interface";
@@ -7,7 +9,7 @@ import { handleZodError } from "../errorHelpers/handleZodError";
 import AppError from "../errorHelpers/AppError";
 
 
-export const globalErrorHandler = (err: any, req: Request, res: Response , next: NextFunction) => {
+export const globalErrorHandler = (err: any, req: Request, res: Response , _next: NextFunction) => {
     if(envVars.NODE_ENV === "development"){
         console.error("Error from global error handler: ", err);
     }
@@ -17,10 +19,10 @@ export const globalErrorHandler = (err: any, req: Request, res: Response , next:
     let stack: string | undefined = undefined;
 
     if(err instanceof  z.ZodError){
-        const simplefiedError = handleZodError(err);
-        statusCode = simplefiedError.statusCode as number;
-        message = simplefiedError.message;
-        errorSources = [...simplefiedError.errorSources];
+        const simplifiedError = handleZodError(err);
+        statusCode = simplifiedError.statusCode as number;
+        message = simplifiedError.message;
+        errorSources = [...simplifiedError.errorSources];
         
     } else if (err instanceof AppError){
         statusCode = err.statusCode;
