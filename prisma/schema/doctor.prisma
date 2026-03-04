@@ -1,5 +1,4 @@
 
-
 model Doctor {
   id            String   @id @default(uuid(7))
   name          String
@@ -23,6 +22,10 @@ model Doctor {
   updatedAt     DateTime  @updatedAt
   
   specialties DoctorSpecialty[]
+  doctorSchedules DoctorSchedules[]
+  prescriptions Prescription[]
+  reviews Review[]
+  appointments Appointment[]
 
   userId        String   @unique
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
