@@ -59,6 +59,12 @@ export const checkAuth = (...allowedRoles: Role[]) => async (req: Request, res: 
                     if(user.isDeleted){
                         throw new AppError(status.UNAUTHORIZED, "Unauthorized: Your account is deleted");
                     }
+
+                    req.user = {
+                        id: user.id,
+                        email: user.email,
+                        role: user.role as Role
+                    };
                 }
              }
 

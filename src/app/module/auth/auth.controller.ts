@@ -4,6 +4,7 @@ import { authService } from "./auth.service";
 import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
 import { tokenUtils } from "../../utils/token";
+import { IRequestUser } from "../../interfaces/request.interface";
 
 
 const registerPatient = catchAsync(
@@ -54,7 +55,22 @@ const loginUser = catchAsync(
     }
 )
 
+const myProfile = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user;
+        const result = await authService.myProfile(user as IRequestUser);
+
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "User profile fetched successfully",
+            data: result,
+        })
+    }
+)
+
 export const authController = {
     registerPatient,
-    loginUser
+    loginUser,
+    myProfile
 }
