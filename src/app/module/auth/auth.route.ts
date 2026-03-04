@@ -11,3 +11,4 @@ router.post('/login', authController.loginUser);
 router.get('/my-profile', checkAuth(Role.ADMIN,Role.SUPER_ADMIN ,Role.DOCTOR , Role.PATIENT),authController.myProfile);
 
 export const authRoutes = router;
+

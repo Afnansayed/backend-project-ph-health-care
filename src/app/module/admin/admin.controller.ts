@@ -3,6 +3,7 @@ import status from "http-status";
 import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import { AdminService } from "./admin.service";
+import { IRequestUser } from "../../interfaces/request.interface";
 
 const getAllAdmins = catchAsync(
     async (req: Request, res: Response) => {
@@ -52,7 +53,7 @@ const deleteAdmin = catchAsync(
     async (req: Request, res: Response) => {
         const { id } = req.params;
 
-        const result = await AdminService.deleteAdmin(id as string);
+        const result = await AdminService.deleteAdmin(id as string, req.user as IRequestUser);
 
         sendResponse(res, {
             httpStatusCode: status.OK,

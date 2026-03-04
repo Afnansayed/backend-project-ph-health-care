@@ -3,6 +3,7 @@ import { UserStatus } from "../../../generated/prisma/enums";
 import AppError from "../../errorHelpers/AppError";
 import { prisma } from "../../lib/prisma";
 import { IUpdateAdminPayload } from "./admin.interface";
+import { IRequestUser } from "../../interfaces/request.interface";
 
 const getAllAdmins = async () => {
     const admins = await prisma.admin.findMany({
@@ -53,7 +54,7 @@ const updateAdmin = async (id: string, payload: IUpdateAdminPayload) => {
 }
 
 //soft delete admin user by setting isDeleted to true and also delete the user session and account
-const deleteAdmin = async (id: string) => {
+const deleteAdmin = async (id: string , user: IRequestUser) => {
     //TODO: Validate who is deleting the admin user. Only super admin can delete admin user and only super admin can delete super admin user but admin user cannot delete super admin user
 
     const isAdminExist = await prisma.admin.findUnique({
@@ -64,6 +65,10 @@ const deleteAdmin = async (id: string) => {
 
     if (!isAdminExist) {
         throw new AppError(status.NOT_FOUND, "Admin Or Super Admin not found");
+    }
+
+    if(isAdminExist.userId === user.id) {
+        throw new AppError(status.FORBIDDEN, "You cannot delete yourself");
     }
 
     const result = await prisma.$transaction(async (tx) => {
