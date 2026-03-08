@@ -4,8 +4,8 @@ import { envVars } from "../config/env";
 import { cookieUtils } from "./cookie";
 import { Response } from "express";
 
-const ONE_DAY = 60 * 60 * 60 * 24;
-const SEVEN_DAYS = 60 * 60 * 60 * 24 * 7;
+const ONE_DAY = 60 * 60 * 24 * 1000; // 1 day in milliseconds
+const SEVEN_DAYS = 60 * 60  * 24 * 1000 * 7;
 
 const getAccessToken = (payload: JwtPayload) => {
   const accessToken = jwtUtils.createToken(
