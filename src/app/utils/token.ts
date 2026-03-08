@@ -4,6 +4,9 @@ import { envVars } from "../config/env";
 import { cookieUtils } from "./cookie";
 import { Response } from "express";
 
+const ONE_DAY = 60 * 60 * 60 * 24;
+const SEVEN_DAYS = 60 * 60 * 60 * 24 * 7;
+
 const getAccessToken = (payload: JwtPayload) => {
   const accessToken = jwtUtils.createToken(
     payload,
@@ -30,7 +33,7 @@ const setAccessTokenCookie = (res: Response, token: string) => {
         secure: true,
         sameSite: "none",
         path: "/",
-        maxAge: 60 * 60 * 60 * 24 // 1 days
+        maxAge: ONE_DAY // 1 days
     })
 }; 
 
@@ -40,7 +43,7 @@ const setRefreshTokenCookie = (res: Response, token: string) => {
         secure: true,
         sameSite: "none",
         path: "/",
-        maxAge: 60 * 60 * 60 * 24 * 7 // 7 days
+        maxAge: SEVEN_DAYS // 7 days
     })
 }; 
 
@@ -50,7 +53,7 @@ const betterAuthSessionCookie = (res: Response, token: string) => {
         secure: true,
         sameSite: "none",
         path: "/",
-        maxAge: 60 * 60 * 60 * 24 // 1 days
+        maxAge: ONE_DAY // 1 days
     })
 }; 
 
