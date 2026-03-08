@@ -8,12 +8,9 @@ import { IRequestUser } from "../../interfaces/request.interface";
 import { jwtUtils } from "../../utils/jwt";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import { IChangePassword, IloginUser, IRegisterPatient } from "./auth.interface";
 
-interface IRegisterPatient {
-    name: string;
-    email: string;
-    password: string;
-}
+
 
 const registerPatient = async (payload: IRegisterPatient) => {
     const { name, email, password } = payload;
@@ -80,10 +77,7 @@ const registerPatient = async (payload: IRegisterPatient) => {
     }
 }
 
-interface IloginUser  {
-    email: string;
-    password: string;
-}
+
 
 const loginUser = async (payload: IloginUser) => {
     const { email, password } = payload;
@@ -218,9 +212,65 @@ const getNewToken = async (refreshToken: string, sessionToken: string) => {
 
 }
 
+const changePassword = async (payload: IChangePassword , sessionToken: string) => {
+    const session = await auth.api.getSession({
+        headers: new Headers({
+           Authorization: `Bearer ${sessionToken}`
+        })
+    })
+    
+    if(!session){
+        throw new AppError(status.UNAUTHORIZED, "Invalid session");
+    }
+
+    const { currentPassword, newPassword } = payload;
+
+    const result = await auth.api.changePassword({
+        body: {
+            currentPassword,
+            newPassword,
+            revokeOtherSessions: true
+         },
+        headers: new Headers({
+            Authorization: `Bearer ${sessionToken}`
+         })
+    });
+
+       
+      //** create tokens */
+     const accessToken =  tokenUtils.getAccessToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+        email: session.user.email,
+        status: session.user.status,
+        isDeleted: session.user.isDeleted,
+        emailVerified: session.user.emailVerified
+     });
+    //  ** refresh token
+    const refreshToken = tokenUtils.getRefreshToken({  
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+        email: session.user.email,
+        status: session.user.status,
+        isDeleted: session.user.isDeleted,
+        emailVerified: session.user.emailVerified
+        });
+
+
+
+    return {
+        ...result,
+        accessToken,
+        refreshToken
+    }
+};
+
 export const authService = {
     registerPatient,
     loginUser,
     myProfile,
-    getNewToken
+    getNewToken,
+    changePassword
 }
