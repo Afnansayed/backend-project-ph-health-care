@@ -8,12 +8,13 @@ import status from "http-status";
 const createSpecialty = catchAsync(
     async (req: Request, res: Response) => {
         const payload = req.body;
-        const result = await SpecialtyService.createSpecialty(payload);
+        console.log({payload});
+        // const result = await SpecialtyService.createSpecialty(payload);
         sendResponse(res, {
             httpStatusCode: status.CREATED,
             success: true,
             message: 'Specialty created successfully',
-            data: result
+            // data: result
         });
     }
 )
