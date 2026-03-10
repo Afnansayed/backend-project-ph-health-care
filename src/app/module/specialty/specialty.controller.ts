@@ -7,14 +7,19 @@ import status from "http-status";
 
 const createSpecialty = catchAsync(
     async (req: Request, res: Response) => {
-        const payload = req.body;
-        console.log({payload});
-        // const result = await SpecialtyService.createSpecialty(payload);
+        const payload = {
+            ...req.body,
+            icon: req.file?.path
+        };
+        // console.log({payload});
+        // console.log(req.file);
+
+        const result = await SpecialtyService.createSpecialty(payload);
         sendResponse(res, {
             httpStatusCode: status.CREATED,
             success: true,
             message: 'Specialty created successfully',
-            // data: result
+            data: result
         });
     }
 )

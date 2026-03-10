@@ -7,6 +7,7 @@ const storage = new CloudinaryStorage({
     params: async (req, file) => {
         const originalName = file.originalname;
         const extension = originalName.split(".").pop()?.toLocaleLowerCase();
+        //console.log({extension})
 
         const fileNameWithoutExtension = originalName
             .split(".")
@@ -16,6 +17,7 @@ const storage = new CloudinaryStorage({
             .replace(/\s+/g, "-")
             // eslint-disable-next-line no-useless-escape
             .replace(/[^a-z0-9\-]/g, "");
+            //console.log({fileNameWithoutExtension})
 
         const uniqueName =
             Math.random().toString(36).substring(2)+
@@ -23,6 +25,8 @@ const storage = new CloudinaryStorage({
             Date.now()+
             "-"+
             fileNameWithoutExtension;
+
+            //console.log({uniqueName})
 
         const folder = extension === "pdf" ? "pdfs" : "images";
 
