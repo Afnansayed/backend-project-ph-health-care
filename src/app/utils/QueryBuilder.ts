@@ -114,6 +114,8 @@ TInclude = Record<string, unknown>
             }
         })
 
+        console.log({filterParams})
+
         const queryWhere = this.query.where as Record<string, unknown>;
         const countQueryWhere = this.countQuery.where as Record<string, unknown>;
 
@@ -425,7 +427,7 @@ TInclude = Record<string, unknown>
 
 
             const parsedValue : string | number = typeof operatorValue === 'string' && !isNaN(Number(operatorValue)) ? Number(operatorValue) : operatorValue;
-
+           console.log({operator})
             switch(operator){
                 case 'lt':
                 case 'lte':
